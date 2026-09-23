@@ -1,42 +1,29 @@
-# Long-Term Trading Bot with Multi-Model Ranking System
+# Long-Term Trading Bot
 
-This project is a trading bot designed to **automatically identify promising stock tickers for long-term investment** by integrating various quantitative and machine learning models.  
-It follows a 4-step analytical pipeline to **forecast market direction, individual ticker growth potential, and even potential market crash timing**.
+A bot that looks for stocks worth holding long term by running several models side by side: news sentiment from an LLM, a GBM price simulation, a CNN-LSTM forecaster (CLAM), and an LPPL check for market bubbles. The model research lives in [Quant_Model_Research](https://github.com/nahniee/Quant_Model_Research).
 
----
+I later reviewed the GBM and CLAM models in [Signal_Validation](https://github.com/nahniee/Signal_Validation). That review led to `gbm_weekly.py`, a weekly version of the GBM score.
 
-## Model Overview (from `Quant Model Research`)
+## Models
 
-| Model                 | Purpose                        | Description |
-|-----------------------|--------------------------------|-------------|
-| `LLM Sentiment Model` | News-based sentiment analysis  | Scores each ticker's news as positive, negative, or neutral using large language models |
-| `GBM Simulation`      | Price path forecasting         | Simulates probabilistic price paths using Geometric Brownian Motion |
-| `CLAM Model`          | Precise growth prediction      | Uses CNN + LSTM + Attention to forecast future closing prices |
-| `Bayesian LPPL`       | Bubble crash timing detection  | Applies Bayesian inference to estimate the critical time of market bubbles or crashes |
+| Model | What it's for | How it works |
+|-------|---------------|--------------|
+| LLM sentiment | News sentiment | Labels each ticker's news articles as positive, negative or neutral with an LLM |
+| GBM simulation | Price paths | Simulates a price path with geometric Brownian motion |
+| CLAM | Growth forecast | CNN + LSTM + attention model that forecasts the next 65 days |
+| Bayesian LPPL | Crash timing | Bayesian fit of the log-periodic power law to estimate when a bubble might end |
 
----
+## Pipeline
 
-## Analysis Pipeline
+1. News sentiment. The bot pulls recent articles from Yahoo Finance and asks an LLM (OpenAI) to label each one positive, negative or neutral. A ticker's score is (positive - negative) / total articles.
 
-1. **News Sentiment Analysis**  
-   - Collects news articles from Yahoo Finance and processes them using an LLM (OpenAI)
-   - Each article is classified as Positive / Negative / Neutral
-   - Sentiment Score = (Positive - Negative) / Total Number of Articles
+2. GBM path simulation. For each ticker it estimates drift and volatility from about two years of log returns, simulates one 63-day path, and scores the stock by how far the path's average sits above today's price.
 
-2. **GBM Path Simulation**  
-   - Simulates Brownian price paths using each ticker’s log returns, drift, and volatility
-   - Estimates the likelihood of positive return, which becomes a ranking score
+3. CLAM forecast. The model takes 252 days of daily price changes, forecasts the next 65 days and turns that into an expected growth figure.
 
-3. **CLAM Inference (CNN + LSTM + Attention)**  
-   - Uses 252 days of historical log returns to predict the next 65 days of closing prices
-   - Computes expected growth percentage based on predicted future prices
+4. Rankings. The bot prints a ranking for each of the three models. The step that combines them is commented out in `long_term_trading.py` for now; the planned weighting is:
+   ```
+   Weighted Score = (News Rank x 0.45) + (CLAM Rank x 0.35) + (GBM Rank x 0.20)
+   ```
 
-4. **Final Score Aggregation (Weighted Ranking)**  
-   - Aggregates model scores using a weighted average to determine final rankings:
-     ```
-     Weighted Score = (News Rank × 0.45) + (CLAM Rank × 0.35) + (GBM Rank × 0.20)
-     ```
-
-5. **LPPL (Log-Periodic Power Law)**  
-   - Performs Bayesian MCMC simulations on `^IXIC` (NASDAQ) and `^GSPC` (S&P500)
-   - Visualizes the most probable crash date (mode) and the 94% Highest Density Interval (HDI)
+5. LPPL. The bot runs a Bayesian MCMC fit on the Nasdaq (`^IXIC`) and the S&P 500 (`^GSPC`) and plots the most likely crash date with a 94% highest density interval.

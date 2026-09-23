@@ -195,19 +195,19 @@ class LongTermPreprocessTrading:
     def print_results_summary(self, news_df, gbm_df, clam_df):
         """Print a combined summary of top performers"""
         print("\n" + "="*80)
-        print("📊 LONG-TERM TRADING ANALYSIS SUMMARY")
+        print("LONG-TERM TRADING ANALYSIS SUMMARY")
         print("="*80)
         
         # Top 25 from each analysis
-        print("\n🗞️  TOP 25 NEWS SENTIMENT ANALYSIS")
+        print("\nTOP 25 NEWS SENTIMENT")
         print("-" * 50)
         print(news_df.head(25).to_string(index=False))
 
-        print("\n📈 TOP 25 GBM PATH SIMULATION")
+        print("\nTOP 25 GBM PATH SIMULATION")
         print("-" * 50)
         print(gbm_df.head(25).to_string(index=False))
 
-        print("\n🤖 TOP 25 CLAM ML PREDICTION")
+        print("\nTOP 25 CLAM PREDICTION")
         print("-" * 50)
         print(clam_df.head(25).to_string(index=False))
 
@@ -232,14 +232,14 @@ class LongTermPreprocessTrading:
         # combined_df['Final Rank'] = range(1, len(combined_df) + 1)
         # combined_df = combined_df[['Final Rank', 'Ticker', 'News Rank', 'GBM Rank', 'CLAM Rank', 'Average Rank']]
         
-        # print("\n🏆 COMBINED RANKING (Top 10)")
+        # print("\nCOMBINED RANKING (Top 10)")
         # print("-" * 60)
         # print(combined_df.head(10).to_string(index=False))
         
         # return combined_df
 
     def run_technical_analysis(self):
-        print("Starting comprehensive technical analysis...")
+        print("Starting analysis...")
         
         # Run individual analyses
         news_result = self.run_news_sentiment_analysis()
@@ -251,7 +251,7 @@ class LongTermPreprocessTrading:
         
         # Return top combined performers
         # top_performers = combined_ranking.head(10)['Ticker'].tolist()
-        # print(f"\n✅ Analysis complete! Top 10 recommended tickers: {top_performers}")
+        # print(f"\nTop 10 tickers: {top_performers}")
         
         # return top_performers
         

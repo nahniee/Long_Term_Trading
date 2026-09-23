@@ -1,14 +1,17 @@
-"""GBM weekly ranking, v2 (redeveloped after the Signal_Validation review).
+"""Weekly GBM ranking, rewritten after the Signal_Validation review.
 
-Changes vs get_gbm_path_simulation (quarterly):
-  * horizon 63 -> 5 trading days (weekly rebalance)
-  * the single Monte-Carlo path is replaced by the closed-form GBM quantities,
-    which removes the sigma*sqrt(T) noise that was destroying the ranking
-  * two scores are available:
-        expected  : E[S_h / S_0] - 1           = exp(mu_d * h) - 1
-        prob_up   : P(S_h > S_0)               = Phi((mu_d - sigma_d^2 / 2) * sqrt(h) / sigma_d)
-    prob_up is a risk-adjusted rank (drift per unit of volatility).
-Inputs are close prices; mu_d, sigma_d are daily log-return mean and std over `lookback` days.
+Compared with get_gbm_path_simulation (quarterly), the horizon drops from 63 trading
+days to 5 to match a weekly rebalance, and the score comes from closed-form GBM results
+instead of one simulated path. The single path added noise of order sigma*sqrt(T),
+which was scrambling the ranking.
+
+Two scores are available:
+    expected : E[S_h / S_0] - 1 = exp(mu_d * h) - 1
+    prob_up  : P(S_h > S_0)     = Phi((mu_d - sigma_d^2 / 2) * sqrt(h) / sigma_d)
+prob_up ranks by drift per unit of volatility.
+
+Inputs are close prices; mu_d and sigma_d are the mean and standard deviation of daily
+log returns over `lookback` days.
 """
 import numpy as np
 import pandas as pd

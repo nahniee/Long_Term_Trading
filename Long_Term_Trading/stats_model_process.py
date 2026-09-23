@@ -15,7 +15,7 @@ def bayesian_adjustment(positive, negative, neutral, prior_mean=0, weight=20):
 
 def get_gbm_drift_calculation(ticker_name, period_year=1):
     try:
-        # 1. Download past 1-year data
+        # Download the past year of data
         end_date = datetime.today()
         start_date = end_date - timedelta(days=365 * period_year)
         ticker = yf.Ticker(ticker_name)
@@ -24,15 +24,15 @@ def get_gbm_drift_calculation(ticker_name, period_year=1):
             print(f"No historical data found for {ticker_name}.")
             return 0
         
-        # 2. Calculate log returns
+        # Log returns
         stock['LogReturn'] = np.log(stock['Close'] / stock['Close'].shift(1))
         stock = stock.dropna()
 
-        # 3. Calculate daily mu and sigma
+        # Daily mu and sigma
         mu = stock['LogReturn'].mean()
         sigma = stock['LogReturn'].std()
         
-        # 4. Calculate average daily drift
+        # Average daily drift
         gbm_drift = (mu - (0.5 * sigma**2))
         return gbm_drift
     except Exception as e:
@@ -66,7 +66,7 @@ def get_gbm_path_simulation(ticker_name, mode ="quarterly"):
         return 0
     
     try:
-        # 1. Fetch historical data
+        # Fetch historical data
         end_date = datetime.today()
         start_date = end_date - timedelta(days=params['period'])
         ticker = yf.Ticker(ticker_name)
@@ -75,11 +75,11 @@ def get_gbm_path_simulation(ticker_name, mode ="quarterly"):
             print(f"No historical data found for {ticker_name}.")
             return 0
         
-        # 2. Calculate log returns
+        # Log returns
         stock['LogReturn'] = np.log(stock['Close'] / stock['Close'].shift(1))
         stock = stock.dropna()
         
-        # 3. Calculate annualized drift (mu) and volatility (sigma)
+        # Annualized drift (mu) and volatility (sigma)
         mu = stock['LogReturn'].mean() * params['scaling_factor']
         sigma = stock['LogReturn'].std() * np.sqrt(params['scaling_factor'])
         S0 = stock['Close'].iloc[-1].item()

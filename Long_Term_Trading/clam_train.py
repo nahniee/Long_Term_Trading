@@ -136,7 +136,7 @@ def create_model(config):
     model = Model(encoder_inputs, outputs)
 
     # Compile with custom metric
-    # The Huber loss function and the AdamW optimizer are the best combination for stock data with high volatility and many unpredictable outliers
+    # Huber loss and AdamW hold up well on volatile stock data with frequent outliers
     model.compile(optimizer=tf.keras.optimizers.AdamW(learning_rate=1e-4), 
                   loss='huber', 
                   metrics=[directional_accuracy])
@@ -159,7 +159,7 @@ def clam_train(env_config, model_type):
     seq_length = config['seq_length']
     forecast_horizon = config['forecast_horizon']
     
-    # Training tickers (multi-sector, 100+ tickers)
+    # Training tickers (94 stocks across several sectors)
     TRAINING_TICKERS = ['MMM', 'AOS', 'ABT', 'ABBV', 'ACN', 'ADBE', 'AMD', 'AES', 'AFL', 'A', 'APD', 
                         'AKAM', 'ALB', 'ARE', 'ALGN', 'ALLE', 'LNT', 'ALL', 'GOOGL', 'GOOG', 'MO', 
                         'AMZN', 'AMCR', 'AEE', 'AAL', 'AEP', 'AXP', 'AIG', 'AMT', 'AWK', 'AMP', 'AME', 
