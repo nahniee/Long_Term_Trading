@@ -1,7 +1,7 @@
 """GBM weekly ranking, v2 (redeveloped after the Signal_Validation review).
 
 Changes vs get_gbm_path_simulation (quarterly):
-  * horizon 65 -> 5 trading days (weekly rebalance)
+  * horizon 63 -> 5 trading days (weekly rebalance)
   * the single Monte-Carlo path is replaced by the closed-form GBM quantities,
     which removes the sigma*sqrt(T) noise that was destroying the ranking
   * two scores are available:
