@@ -2,7 +2,7 @@
 
 A bot that looks for stocks worth holding long term by running several models side by side: news sentiment from an LLM, a GBM price simulation, a CNN-LSTM forecaster (CLAM), and an LPPL check for market bubbles. The model research lives in [Quant_Model_Research](https://github.com/nahniee/Quant_Model_Research).
 
-I later reviewed the GBM and CLAM models in [Signal_Validation](https://github.com/nahniee/Signal_Validation). That review led to `gbm_weekly.py`, a weekly version of the GBM score.
+I later reviewed the GBM and CLAM models in [Signal_Validation](https://github.com/nahniee/Signal_Validation). The weekly versions that came out of that review are in Quant_Model_Research.
 
 ## Models
 
